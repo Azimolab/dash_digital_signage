@@ -14,27 +14,27 @@ from dash_bootstrap_templates import ThemeChangerAIO
 from datetime import datetime, timedelta 
 
 
-def gerar_card_channel(id_slide, position, title):
+def render_card_slide(id_slide, position, title):
     ID = id_slide
     ID_BTN_EDI_SLIDE = ("btn_e_" + ID)
     ID_BTN_DEL_SLIDE = ("btn_d_" + ID)
-    POSICAO = position
-    TITULO = title
+    POSITION = position
+    TITLE = title
 
     return dbc.Col([
                 dbc.Card([
-                    dbc.CardHeader(TITULO),
+                    dbc.CardHeader(TITLE),
                     dbc.CardBody(
                         [
                             html.P(
-                                 POSICAO,
+                                 POSITION,
                                  className="card-text",
                              ),
                              dbc.Button(
-                                 "V", color="success", id={'type': 'output-ex3','index': ID_BTN_EDI_SLIDE}
+                                 "V", color="success", id={'type': 'btn_edit_card_slide','index': ID_BTN_EDI_SLIDE}
                              ),
                              dbc.Button(
-                                 "X", color="danger", id=ID_BTN_DEL_SLIDE
+                                 "X", color="danger", id={'type': 'btn_delete_card_slide','index': ID_BTN_DEL_SLIDE}
                              ),
                         ]
                     ),
@@ -55,7 +55,7 @@ def render_channel_cards(x):
         id_slide = db2._get_value(i, 'id_slide')
         position = db2._get_value(i, 'position')
         title = db2._get_value(i, 'title')
-        Layout1 = gerar_card_channel(id_slide,position,title) 
+        Layout1 = render_card_slide(id_slide,position,title) 
         my_list.append(Layout1) 
     return my_list
 
@@ -73,7 +73,7 @@ layout = html.Div([
                     dbc.Label("Identificação: "),
                     dbc.Input(placeholder="channel 1", id="txt-receita"),
                     dbc.Button(color="success", id="add_slide1",
-                            children=["Adicionar Slide"])
+                            children=["add Slide"])
                     ], width=2),
             ], style={"margin": "10px"}
         ),
@@ -85,7 +85,7 @@ layout = html.Div([
                     dbc.Label("Identificação: "),
                     dbc.Input(placeholder="channel 2", id="txt-receita2"),
                     dbc.Button(color="success", id="open-novo-despesa",
-                            children=["Adicionar Slide"])
+                            children=["add Slide"])
                     ], width=2),
             ], style={"margin": "10px"}
         )       

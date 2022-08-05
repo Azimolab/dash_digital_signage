@@ -105,7 +105,7 @@ body = dbc.Container(
 
 
 modal=dbc.Modal([
-                dbc.ModalHeader(dbc.ModalTitle("Adicionar Slide")),
+                dbc.ModalHeader(dbc.ModalTitle("Slide X")),
                 dbc.ModalBody([
                     dbc.Row([
                             dbc.Col([
@@ -150,9 +150,9 @@ def render_page_content(pathname):
     if pathname == "/" or pathname == "/dashboard":
         return channels.layout
 
-    if pathname == "/extratos":
+ #   if pathname == "/extratos":
 
-        return channels.layout
+ #       return channels.layout
 
 
 # Pop-up despesa
@@ -165,7 +165,7 @@ def render_page_content(pathname):
     Output('app-container8', 'children'),
     Output("divtable", "children")
     ],
-    Input({'type': 'output-ex3', 'index': ALL}, 'n_clicks'),
+    Input({'type': 'btn_edit_card_slide', 'index': ALL}, 'n_clicks'),
     Input('store-receitas', 'data'),
     State("modal-novo-despesa", "is_open"), prevent_initial_call=True
 )
