@@ -35,18 +35,18 @@ card_text2 = {
     "margin": "auto", 
 }
 
-def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
-    g=str(grupo)
-    c=str(canal)
-    p=str(posicao)
+def render_template1(group,channel,position,title,template,data,filter):
+    g=str(group)
+    c=str(channel)
+    p=str(position)
     t=str(template)
     ID=g+c+p+t
     df_template1_data = pd.read_csv(data)
     df_template1_data['data'] =  pd.to_datetime(df_template1_data['data'], format='%Y/%m/%d')
-    ACUMULADO = df_template1_data._get_value(filtro, 'acumulado')
-    VALOR_D = df_template1_data._get_value(filtro, 'dia')
-    UNIDADE = df_template1_data._get_value(filtro, 'unidade')
-    TITULO = titulo
+    ACUMULADO = df_template1_data._get_value(filter, 'acumulado')
+    VALOR_D = df_template1_data._get_value(filter, 'dia')
+    UNIDADE = df_template1_data._get_value(filter, 'unidade')
+    TITULO = title
   
     
     return html.Div(

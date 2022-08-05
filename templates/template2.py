@@ -41,16 +41,16 @@ card_text2 = {
 
 today = datetime.today()
 
-def gerar_template_2(grupo,canal,posicao,titulo,template,data,filtro):
-    TITULO = titulo
-    g=str(grupo)
-    c=str(canal)
-    p=str(posicao)
+def render_template2(group,channel,position,title,template,data,filter):
+    TITLE = title
+    g=str(group)
+    c=str(channel)
+    p=str(position)
     t=str(template)
     ID=g+c+p+t
     
     today = datetime.today()
-    target = today - timedelta(days=int(filtro))
+    target = today - timedelta(days=int(filter))
     df = pd.read_csv(data)
     df ['data'] = df['data'].astype('datetime64[ns]')
     df = df[lambda x: x['data'].between(datetime(target.year,target.month,1),today)]
@@ -121,7 +121,7 @@ def gerar_template_2(grupo,canal,posicao,titulo,template,data,filtro):
             ),
             dbc.Row(
                 [
-                    dbc.Col(html.H1(TITULO, style={"font-size": "80px"}),
+                    dbc.Col(html.H1(TITLE, style={"font-size": "80px"}),
                             width="auto", style={
                             "padding-left": "60px",
                             "padding-right": "200px",

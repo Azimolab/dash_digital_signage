@@ -1,4 +1,4 @@
-id_slide,grupo,canal,posicao,template,titulo,data,filtro
+id_slide,group,channel,position,template,title,data,filter
 s1111,1,1,1,1,Cartões,cartoes.csv,0
 s1121,1,1,2,1,Acordos PF,acordospf.csv,0
 s1131,1,1,3,1,Cartões 3,cartoes.csv,1

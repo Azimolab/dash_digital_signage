@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 from datetime import datetime, date
 
 from sqlalchemy import true
-from components import canais
+from components import channels
 
 dash.register_page(__name__)
 
@@ -147,12 +147,12 @@ def switch_tab(at):
 
 @callback(Output("page-content5", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
-    if pathname == "/" or pathname == "/dashb":
-        return canais.layout
+    if pathname == "/" or pathname == "/dashboard":
+        return channels.layout
 
     if pathname == "/extratos":
 
-        return canais.layout
+        return channels.layout
 
 
 # Pop-up despesa
@@ -184,15 +184,15 @@ def toggle_modal(n1, dataprev,is_open):
         db = pd.read_csv('db.csv')
         db2 = db[db['id_slide'] == btid[2]] 
         db2.reset_index(inplace=True)
-        titulo = db2._get_value(0, 'titulo')
+        title = db2._get_value(0, 'title')
         template = db2._get_value(0, 'template')
         data = db2._get_value(0, 'data')
-        filtro = db2._get_value(0, 'filtro')
+        filter = db2._get_value(0, 'filter')
         div_table = table (data)
         print(n1)
-        print(titulo)
+        print(title)
         is_open = True
-        return [is_open,titulo,template,filtro,data,datapre,div_table]
+        return [is_open,title,template,filter,data,datapre,div_table]
 
 
 @callback(
