@@ -29,13 +29,13 @@ card_icon2 = {
 }
 card_text = {
     "textAlign": "right",
-    "fontSize": 50,
+    "fontSize": "2.5rem",
     "margin": "auto",
     "color": "#8B8CA8",
 }
 card_text2 = {
     "textAlign": "right",
-    "fontSize": 50,
+    "fontSize": "2.5rem",
     "margin": "auto", 
 }
 
@@ -103,7 +103,7 @@ def render_template2(group,channel,position,title,template,data,filter):
     )
 
 
-    img_bytes = fig2.to_image(format="png", width=1340, height=900, scale=1)
+    img_bytes = fig2.to_image(format="png", width='80%', height='40%', scale=1)
     encoding = b64encode(img_bytes).decode()
     img_b64 = "data:image/png;base64," + encoding
 
@@ -121,10 +121,10 @@ def render_template2(group,channel,position,title,template,data,filter):
             ),
             dbc.Row(
                 [
-                    dbc.Col(html.H1(TITLE, style={"font-size": "80px"}),
+                    dbc.Col(html.H1(TITLE, style={"font-size": "4vw"}),
                             width="auto", style={
                             "padding-left": "60px",
-                            "padding-right": "200px",
+                            "padding-right": "10%",
                             "margin-top": "-25px",
                             "background-color": "#CE0300",
                             'color': 'white',

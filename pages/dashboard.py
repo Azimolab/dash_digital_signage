@@ -166,20 +166,30 @@ def render_page_content(pathname):
     Output("divtable", "children")
     ],
     Input({'type': 'btn_edit_card_slide', 'index': ALL}, 'n_clicks'),
-    Input('store-receitas', 'data'),
+    Input('store-receitas', 'data'),Input('store-receitas2', 'data'),
     State("modal-novo-despesa", "is_open"), prevent_initial_call=True
 )
-def toggle_modal(n1, dataprev,is_open):
+def toggle_modal(n1, store_receitas,store_receitas2,is_open):
     ctx = dash.callback_context
     #changed_id = ctx.triggered[0]['prop_id'].split('.')[0]
     button_id = ctx.triggered_id if not None else 'No clicks yet'
     btid=(button_id.index).split("_")
 
     print(btid)
+
     print(button_id.index)
+    db = pd.read_csv('db.csv')
+    db2 = db[db['id_slide'] == btid[2]] #recupera o id do botao
+    db2.reset_index(inplace=True)
+    TEMPLATE = db2._get_value(0, 'template')
+    POSITION = db2._get_value(0, 'position')-1
+    if TEMPLATE == 1:
+        datapre = store_receitas[POSITION]
+    if TEMPLATE == 2:
+        datapre = store_receitas2[POSITION]
 
     print(n1)
-    datapre = dataprev[0]
+    
     if n1 is not None:
         db = pd.read_csv('db.csv')
         db2 = db[db['id_slide'] == btid[2]] 
