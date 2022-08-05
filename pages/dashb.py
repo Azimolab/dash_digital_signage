@@ -113,19 +113,16 @@ modal=dbc.Modal([
                             ], width=3),
                             dbc.Col([
                                 html.Div(id='app-container8')
-                        ], width=9)  
-                    ]),
-                    
-                    dbc.Row([
-
-                                                    
-                        dbc.ModalFooter([
-                            dbc.Button("Adicionar despesa", color="error", id="salvar_despesa", value="despesa"),
-                            dbc.Popover(dbc.PopoverBody("Despesa Salva"), target="salvar_despesa", placement="left", trigger="click"),
-                        ]
-                        )
-                    ], style={"margin-top": "25px"}),
-                ])
+                        ], width=9, style={})  
+                    ]),           
+#                    dbc.Row([                                                 
+#                        dbc.ModalFooter([
+#                            dbc.Button("Adicionar despesa", color="error", id="salvar_despesa", value="despesa"),
+#                            dbc.Popover(dbc.PopoverBody("Despesa Salva"), target="salvar_despesa", placement="left", trigger="click"),
+#                        ]
+#                        )
+#                    ], style={"margin-top": "25px"}),
+                ], style={})
             ],
             style={"background-color": "rgba(17, 140, 79, 0.05)"},
             id="modal-novo-despesa",

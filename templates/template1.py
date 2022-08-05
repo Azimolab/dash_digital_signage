@@ -25,13 +25,13 @@ card_icon2 = {
 }
 card_text = {
     "textAlign": "right",
-    "fontSize": 50,
+    "fontSize": "2.5rem",
     "margin": "auto",
     "color": "#8B8CA8",
 }
 card_text2 = {
     "textAlign": "right",
-    "fontSize": 50,
+    "fontSize": "2.5rem",
     "margin": "auto", 
 }
 
@@ -48,7 +48,7 @@ def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
     UNIDADE = df_template1_data._get_value(filtro, 'unidade')
     TITULO = titulo
   
-
+    
     return html.Div(
         [
             dbc.Row(
@@ -62,10 +62,10 @@ def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
             ),
             dbc.Row(
                 [
-                    dbc.Col(html.H1(TITULO, style={"font-size": "80px"}),
+                    dbc.Col(html.H1(TITULO, style={"font-size": "4vw"}),
                             width="auto", style={
                             "padding-left": "60px",
-                            "padding-right": "200px",
+                            "padding-right": "10%",
                             "margin-top": "-25px",
                             "background-color": "#CE0300",
                             'color': 'white',
@@ -77,7 +77,7 @@ def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
             dbc.Row(
                 [
                     dbc.Col(html.H2("DU",
-                            style={"font-size": "60px"}),
+                            style={"font-size": "3.5vw"}),
                             width="auto", style={
                             "padding-left": "70px",
                             "padding-right": "70px",
@@ -107,22 +107,22 @@ def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
                             html.H5(ACUMULADO,
                                     className="card-title",
                                     style={
-                                        "font-size": "300px",
+                                        "font-size": "10rem",
                                         "text-align": "center",
                                         "color": "#8B8CA8",
-                                        "padding-top": "60px",
+                                        "padding-top": "2%",
                                     }),
-                            html.H5("MM",
+                            html.H5(UNIDADE,
                                    className="card-text",
                                    style={
-                                       "font-size": "90px",
+                                       "font-size": "5rem",
                                        "text-align": "center",
                                        "color": "#8B8CA8", },
                                    ),
                         ], style={
-                            "margin-top": "60px",
-                            "margin-bottom": "60px",
-                        }),), color="#FFFFFF", style={"background-color": "#FFFFFF", "min-height": "800px", }),
+                            "margin-top": "3%",
+                            "margin-bottom": "3%",
+                        }),), color="#FFFFFF", style={"background-color": "#FFFFFF", "min-height": "30%", }),
                         style={
                         "align-content": "center",
                     }),
@@ -141,25 +141,25 @@ def gerar_template_1(grupo,canal,posicao,titulo,template,data,filtro):
                             html.H5(VALOR_D,
                                     className="card-title",
                                     style={
-                                        "font-size": "300px",
+                                        "font-size": "10rem",
                                         "text-align": "center",
-                                        "padding-top": "60px",
+                                        "padding-top": "2%",
                                     }),
                             html.H5(UNIDADE,
                                    className="card-text",
                                    style={
-                                       "font-size": "90px",
+                                       "font-size": "5rem",
                                        "text-align": "center",
                                    },
                                    ),
                         ], style={
-                            "margin-top": "60px",
-                            "margin-bottom": "60px",
-                        }),), color="#CE0300", inverse=True, style={"min-height": "800px"}),
+                            "margin-top": "3%",
+                            "margin-bottom": "3%",
+                        }),), color="#CE0300", inverse=True, style={"min-height": "30%"}),
                     ),
-                ], style={"margin-left": "130px",
-                          "margin-right": "130px",
-                          "margin-top": "40px",
-                          "margin-botton": "40px",
+                ], style={"margin-left": "5%",
+                          "margin-right": "5%",
+                          "margin-top": "2%",
+                          "margin-botton": "2%",
                           }),
         ],style={"background-color": cor_fundo, "min-height": "100vh"}, id=ID),
