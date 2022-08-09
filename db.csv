@@ -1,7 +1,10 @@
-id_slide,group,channel,position,template,title,data,filter
-s1111,1,1,1,1,Cartões,cartoes.csv,0
-s1121,1,1,2,1,Acordos PF,acordospf.csv,0
-s1131,1,1,3,1,Cartões 3,cartoes.csv,0
-s1141,1,1,4,1,Acordos 4,acordospf.csv,0
-s1212,1,2,1,2,Humanos Produção,humanos_prod.csv,180
-s1222,1,2,2,2,Humanos Acumulado,humanos_acum.csv,180
+id_slide,group,channel,position,template,title,data,filter,value1,value2,value3
+s1111,1,1,1,1,CARTÕES,cartoes.csv,0,ACUMULADO,DIA,MM
+s1121,1,1,2,1,CARTÕES 2,cartoes.csv,0,ACUMULADO,DIA,MM
+s1131,1,1,3,1,CARTÕES 3,cartoes.csv,0,ACUMULADO,DIA,MM
+s1141,1,1,4,1,ACORDOS PF,acordospf.csv,0,ACUMULADO,DIA,MM
+s1212,1,2,1,2,HUMANOS PRODUÇÃO,humanos_prod.csv,180,,,
+s1222,1,2,2,2,HUMANOS ACUMULADO,humanos_acum.csv,180,,,
+s1712,1,7,1,2,EFICIÊNCIA,eficiencia.csv,180,,,
+s1313,1,3,1,3,PRODUCÃO,producao.csv,180,TOTAL PREVENTIVOS,PARCIAIS,AVANCE
+s1414,1,4,1,4,TAXA DE JUROS,taxa_juros.csv,180,JUROS (A.M.),PARCIAIS,AVANCE

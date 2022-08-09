@@ -22,11 +22,10 @@ app.config['suppress_callback_exceptions'] = True
 app.scripts.config.serve_locally = True
 server = app.server
 
-
 def render_slides(x):
     my_list = []
-    db = pd.read_csv('db.csv')
-    db2 = db[db['channel'] == x] 
+    df_db = pd.read_csv('db.csv',index_col=0)
+    db2 = df_db[df_db['channel'] == x] 
     #db2 = db.loc[db['channel'] == 1]  
     db2.reset_index(inplace=True)
     db2.info
@@ -50,8 +49,9 @@ def render_slides(x):
         
     return my_list
 
-APP_LAYOUTS2 = render_slides(2)
+
 APP_LAYOUTS1 = render_slides(1)
+APP_LAYOUTS2 = render_slides(2)
 
 app.layout = html.Div([
     html.Div(
