@@ -105,6 +105,7 @@ def updaterowchannels (data):
     return [SD, SD2]
 
 
+
 db = pd.read_csv('db.csv')
 id_list = db['id_slide'].tolist()
 size = (len(id_list))-1
@@ -115,7 +116,6 @@ size = (len(id_list))-1
 for i in range(size):
 
     n = id_list[i]
-
 
     @callback(
         Output(f"{n}", "children"),
@@ -131,4 +131,3 @@ for i in range(size):
         df_db = df_db.drop(id)
         df_db.to_csv("db.csv")
         return None
-

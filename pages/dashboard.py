@@ -27,6 +27,7 @@ from components import channels
 dash.register_page(__name__)
 
 df = pd.read_csv('cartoes.csv')
+df_aux = df.to_dict()
 
 df_db = pd.read_csv('db.csv')
 df_db_aux = df_db.to_dict()
@@ -88,10 +89,47 @@ navbar = dbc.NavbarSimple(
 
 def table (dados):
     df = pd.read_csv(dados)
-    
-    tables = dash_table.DataTable(id="modal_table1", editable=True, row_deletable=True, columns=[
-                                           {'name': i, 'id': i} for i in df.columns], data=df.to_dict('records')),
+    #df = pd.read_csv('cartoes.csv')
+    tables = dash_table.DataTable(id="modal_table1", editable=True, row_deletable=True ,page_size=10,
+                                    columns=[{'name': i, 'id': i} for i in df.columns], 
+                                    data=df.to_dict('records'),
+                                    style_cell_conditional=[
+                                            {'if': {'column_id': 'unidade',},
+                                            'display': 'None',}]
+                                )
     return  tables
+
+def table2 ():
+    db = pd.read_csv('db.csv')
+    db2 = db[db['id_slide'] == 's1111'] 
+    #df = pd.read_csv('cartoes.csv')
+    tables = dash_table.DataTable(id="modal_table2", editable=True, row_deletable=False ,page_size=10,
+                                    columns=[{'name': i, 'id': i} for i in db2.columns], 
+                                    data=db2.to_dict('records'),
+                                    style_cell_conditional=[
+                                            {'if': {'column_id': 'group',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'channel',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'id_slide',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'position',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'data',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'value1',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'value2',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'value3',},
+                                            'display': 'None',},
+                                            {'if': {'column_id': 'template',},
+                                            'display': 'None',}
+                                            
+                                            ]
+                                )
+    return  tables
+
 
 def getData():
     return pd.read_csv().to_dict('records')
@@ -106,30 +144,53 @@ def back_to_df(dictio):
 #tblcols2 =[{"name": i, "id": i} for i in back_to_df(getData2()).columns]
 
 
-
-
 body = dbc.Container(
     [
-        dbc.Row(
+        dbc.Col(
             [
-                dbc.Label("Titulo"),
-                dbc.Input(placeholder="Título do Slide", id="slide_title"),
-                html.Div(id="divtable"),
-                dbc.Col(html.Button('+', id='editing-rows-button', n_clicks=0)),
-                dbc.Col(html.Button('update', id='btn-save', n_clicks=0)),
-                html.H5("MyBudget", id="template",
-                        className="text-primary"),
-                html.H5("MyBudget", id="valor",
-                        className="text-primary"),
-                html.H5("MyBudget", id="db",
-                        className="text-primary"),
+                dbc.Row([
+                        dbc.Label("Campos de texto"),
+                        html.Div(table2()),  # id=divtable2
+                        ], style={"padding-bottom": "20px"}),
+                dbc.Row([
+                    
+                        dbc.Col([
+                            dbc.Button('Add Nova linha', id='editing-rows-button', color="success", className="me-1", n_clicks=0),
+                            dbc.Button('Salvar', id='btn-save', color="success", className="me-1", n_clicks=0)
+                                ])
+                        ]),
+                dbc.Row([
+                    html.Div(id="divtable")
+                ], style={"padding-bottom": "20px","padding-top": "20px"}),
+
             ]
         )])
 
 
 
 modal=dbc.Modal([
-                dbc.ModalHeader(dbc.ModalTitle("Slide X")),
+                dbc.ModalHeader([ 
+                        dbc.Col([
+                                dbc.Label("Identificação do Slide"),
+                                html.H5("asdas", id="slide_title")
+                        ], width=2, style={"padding-left": "25px"}), 
+                        dbc.Col([
+                                dbc.Label("Template"),
+                                html.H5("asdas", id="template")
+                        ], width=2, style={"padding-left": "15px"}),
+                        dbc.Col([
+                                dbc.Label("Base de Dados"),
+                                html.H5("asdas", id="db")
+                        ], width=2, style={"padding-left": "15px"}),
+                        dbc.Col([
+                                dbc.Label("Posição"),
+                                html.H5("asdas", id="valor1")
+                        ], width=2, style={"padding-left": "15px"}),
+                        dbc.Col([
+                                dbc.Label("Filtro"),
+                                html.H5("asdas", id="valor")
+                        ], width=2, style={"padding-left": "15px"})
+                ]),
                 dbc.ModalBody([
                     dbc.Row([
                             dbc.Col([
@@ -137,16 +198,9 @@ modal=dbc.Modal([
                             ], width=3),
                             dbc.Col([
                                 html.Div(id='slide_preview')
-                        ], width=9, style={})  
+                        ], width=9)  
                     ]),           
-#                    dbc.Row([                                                 
-#                        dbc.ModalFooter([
-#                            dbc.Button("Adicionar despesa", color="error", id="salvar_despesa", value="despesa"),
-#                            dbc.Popover(dbc.PopoverBody("Despesa Salva"), target="salvar_despesa", placement="left", trigger="click"),
-#                        ]
-#                        )
-#                    ], style={"margin-top": "25px"}),
-                ], style={})
+                ])
             ],
             style={"background-color": "rgba(17, 140, 79, 0.05)"},
             id="modal_editor",
@@ -186,17 +240,15 @@ def render_page_content(pathname):
 
 @callback(
     [Output("modal_editor", "is_open"),
-    Output("slide_title", "placeholder"),
+    Output("slide_title", "children"),
     Output("template", "children"),
     Output("valor", "children"),
     Output("db", "children"),
-    Output('slide_preview', 'children'),
-    Output("divtable", "children")],
+    Output('divtable', 'children')],
     Input({'type': 'btn_edit_card_slide', 'id': ALL}, 'n_clicks'),
-    Input('store-receitas', 'data'),Input('store-receitas2', 'data'),
     State("modal_editor", "is_open")
 )
-def toggle_modal(n1, store_receitas,store_receitas2,is_open):
+def toggle_modal(n1, is_open):
 
     ctx = dash.callback_context
     #button_dict = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
@@ -210,15 +262,8 @@ def toggle_modal(n1, store_receitas,store_receitas2,is_open):
             db = pd.read_csv('db.csv')
             db2 = db[db['id_slide'] == btn_split[2]] 
             db2.reset_index(inplace=True)
-            TEMPLATE = db2._get_value(0, 'template')
-            POSITION = db2._get_value(0, 'position')-1
 
-            if TEMPLATE == 1:
-                    datapre = store_receitas[POSITION]
-            if TEMPLATE == 2:
-                    datapre = store_receitas2[POSITION]
-
-            title = db2._get_value(0, 'title')
+            title = db2._get_value(0, 'id_slide')
             template = db2._get_value(0, 'template')
             data = db2._get_value(0, 'data')
             filter = db2._get_value(0, 'filter')
@@ -227,7 +272,7 @@ def toggle_modal(n1, store_receitas,store_receitas2,is_open):
             print(title)
             print(btn_split[2])
             is_open = True
-            return [is_open,title,template,filter,data,datapre,div_table]
+            return [is_open,title,template,filter,data,div_table]
     print(n1)
     return is_open
 
@@ -235,6 +280,54 @@ def toggle_modal(n1, store_receitas,store_receitas2,is_open):
 
 
 
+@callback(
+    [Output("modal_table1", "data"),
+    Output("modal_table1", "columns"),
+    Output('slide_preview', 'children')],
+    [Input("btn-save", "n_clicks"), 
+    Input('editing-rows-button', 'n_clicks'),
+    Input('db', 'children'),
+    Input('store-receitas', 'data'),
+    Input('store-receitas2', 'data'),
+    Input("slide_title", "children")],
+    [State('modal_table1', 'data'), 
+    State('modal_table1', 'columns'),
+    State('slide_preview', 'children'),
+    State('store-receitas', 'data'),
+    State('store-receitas2', 'data')]
+)
+def update(button, clicked, dataframetemp, store_receitas,store_receitas2,title, data,columns,slide_preview,x,y):
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    print (changed_id)
+
+    datapre = slide_preview
+
+    db = pd.read_csv('db.csv')
+    db2 = db[db['id_slide'] == title] 
+    db2.reset_index(inplace=True)
+    TEMPLATE = db2._get_value(0, 'template')
+    POSITION = db2._get_value(0, 'position')-1
+
+    if TEMPLATE == 1:
+            datapre = store_receitas[POSITION]
+    if TEMPLATE == 2:
+            datapre = store_receitas2[POSITION]
+
+    
+    if 'btn-save' in changed_id:
+        df = pd.DataFrame(data)
+        df.to_csv(dataframetemp, encoding='utf-8', index=False)
+        columns = [{'name': i, 'id': i} for i in df.columns]
+        data = df.to_dict('records')
+        print(data)
+        return data, columns, datapre
+    if 'editing-rows-button' in changed_id:
+        if clicked > 0:              
+             data2=({c['id']: '' for c in columns})
+             data.insert(0,data2)
+             print(data)
+        return data, columns, datapre
+    return data, columns, datapre
 
 
 
@@ -313,30 +406,16 @@ def toggle_modal(n1, store_receitas,store_receitas2,is_open,update_btn):
         return [is_open,title,template,filter,data,datapre,div_table]
 
 '''
-'''
-@callback(
-    [Output("modal_table1", "data"),
-    Output("modal_table1", "columns")],
-    [Input("btn-save", "n_clicks"), 
-    Input('editing-rows-button', 'n_clicks'),
-    Input('db', 'children')],
-    [State('modal_table1', 'data'), 
-    State('modal_table1', 'columns')]
-)
-def update(button, clicked, dataframetemp, data, columns):
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    if 'btn-save' in changed_id:
-        df = pd.DataFrame(data)
-        df.to_csv(dataframetemp, encoding='utf-8', index=False)
-        columns = [{'name': i, 'id': i} for i in df.columns]
-        data = df.to_dict('records')
-        return data, columns
-    if 'editing-rows-button' in changed_id:
-        if clicked > 0:
-             data.append({c['id']: '' for c in columns})
-        return data, columns
-    return data, columns
-'''
+
+
+
+
+
+
+
+
+
+
 
 
     #if n1:

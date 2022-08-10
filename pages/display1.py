@@ -65,6 +65,7 @@ def CHANGE_PAGE6(n_intervals):
           State('interval-component', 'interval'),
           State('store-start', 'data')])
 def CHANGE_PAGE3(n_intervalsInput, storedata, storedata2, disabled, interval, storedatastate):
+    print('display1 ok')
     SD= storedata2
     LAYOUTS_TELA_1 = SD
     I = interval

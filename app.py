@@ -28,7 +28,6 @@ def render_slides(x):
     db2 = df_db[df_db['channel'] == x] 
     #db2 = db.loc[db['channel'] == 1]  
     db2.reset_index(inplace=True)
-    db2.info
     db4= len(db2.index)
     for i in range(db4):
         id_slide = db2._get_value(i, 'id_slide')
@@ -49,9 +48,9 @@ def render_slides(x):
         
     return my_list
 
-
 APP_LAYOUTS1 = render_slides(1)
 APP_LAYOUTS2 = render_slides(2)
+
 
 app.layout = html.Div([
     html.Div(
@@ -66,7 +65,7 @@ app.layout = html.Div([
         id='interval-componenty',
         interval=10000,  # in milliseconds
         n_intervals=0,
-        disabled=False,
+        disabled=True,
     ),
 	dash.page_container
 ])
@@ -77,9 +76,11 @@ app.layout = html.Div([
 def CHANGE_PAGE6(n_intervals):
     APP_LAYOUTS1 = render_slides(1)
     APP_LAYOUTS2 = render_slides(2)
+    print(APP_LAYOUTS1)
     return [APP_LAYOUTS1,APP_LAYOUTS2]
 
 
 
 if __name__ == '__main__':
-    app.run_server(host= '192.168.3.12',port=8051, debug=True)
+   # app.run_server(host= '192.168.3.12',port=8051, debug=False)
+    app.run_server(debug=False)
