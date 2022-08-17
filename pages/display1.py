@@ -1,17 +1,11 @@
-import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc
+from re import X
 from dash.dependencies import Input, Output, State
-from dash_extensions.enrich import html, dcc, Output, Input, DashProxy
+from dash_extensions.enrich import html, dcc, Output, Input
 import dash
 from dash import html, dcc, callback, Input, Output
-from flask_caching import function_namespace
 import pandas as pd
-import plotly.express as px
-from dash_svg import Svg, G, Path, Circle
-from dash_extensions import WebSocket
-from dash_bootstrap_templates import ThemeChangerAIO
-from datetime import datetime, timedelta 
-
+import json 
+import pickle
 
 dash.register_page(__name__)
 
@@ -60,13 +54,21 @@ def CHANGE_PAGE6(n_intervals):
           Output('app-container', 'children')],
           [Input('interval-component', 'n_intervals'),
           Input('store-start', 'data'),
-          Input('store-receitas', 'data')],
+          Input('store_layouts_c11', 'data')],
           [State('interval-component', 'disabled'),
           State('interval-component', 'interval'),
-          State('store-start', 'data')])
+          State('store_layouts_c11', 'data')])
 def CHANGE_PAGE3(n_intervalsInput, storedata, storedata2, disabled, interval, storedatastate):
     print('display1 ok')
-    SD= storedata2
+    I = interval
+    D = disabled
+
+    with open('filepk.txt', 'rb') as handle:
+        b = pickle.loads(handle.read())
+    #c=(b['s1111'])
+
+    SD = list(b.values())
+
     LAYOUTS_TELA_1 = SD
     I = interval
     D = disabled
@@ -88,4 +90,45 @@ def update_refresh_rate(x):
     return limited_value
 
 
+
+
+
+
+'''
+@callback([Output('interval-component', 'interval'),
+          Output('interval-component', 'disabled'),
+          Output('app-container', 'children')],
+          [Input('interval-component', 'n_intervals'),
+          Input('store-start', 'data'),
+          Input('cache_layout_c1', 'children')],
+          [State('interval-component', 'disabled'),
+          State('interval-component', 'interval'),
+          State('store-start', 'data'),
+          State('cache_layout_c1', 'children')])
+def change_slide_channel(n_intervalsInput, storedata, cache_layout_c1, disabled, interval, storedatastate,x):
+    #print('display atualizado')
+    #print(cache_layout_c1)
+
+    SD = list(cache_layout_c1.values())
+    LAYOUTS_TELA_1 = SD
+    I = interval
+    D = disabled
+    I = update_refresh_rate(LAYOUTS_TELA_1)
+    app = LAYOUTS_TELA_1[n_intervalsInput % len(LAYOUTS_TELA_1)]
+    if storedata == True:
+        I = update_refresh_rate(LAYOUTS_TELA_1)
+        app = LAYOUTS_TELA_1[n_intervalsInput % len(LAYOUTS_TELA_1)]
+        D = False
+    else:
+        D = True
+    return [I, D, app]
+
+
+def update_refresh_rate(x):
+    df_time = pd.read_csv('time.csv')
+    value = (df_time._get_value(0, 'x') / len(x))
+    limited_value = (round(value, 2))*1000
+    return limited_value
+
+'''
 

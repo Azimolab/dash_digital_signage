@@ -2,12 +2,13 @@ dash==2.5.1
 dash-bootstrap-components==1.2.0
 dash-bootstrap-templates==1.0.5
 dash-core-components==2.0.0
-dash-extensions==0.1.4
 dash-html-components==2.0.0
+dash-extensions==0.1.4
 dash-svg==0.0.8
 dash-table==5.0.0
 gunicorn==20.1.0
 numpy==1.23.1
 pandas==1.4.3
-regex @ file:///opt/concourse/worker/volumes/live/92c80cd7-7907-4d3e-4d09-20e3cc1c2619/volume/regex_1648447728151/work
-tables @ file:///opt/concourse/worker/volumes/live/daa73f70-754b-4f28-73ce-6f96c40f4b9d/volume/pytables_1607975400838/work
+pybase64==1.2.2
+kaleido==0.2.1
+plotly==5.7.0

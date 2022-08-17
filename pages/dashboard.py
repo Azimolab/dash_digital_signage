@@ -1,30 +1,12 @@
-from asyncio import proactor_events
-from imaplib import Internaldate2tuple
-from re import X
-import json
-from sqlite3 import dbapi2
-from termios import NL1
 import dash_bootstrap_components as dbc
-from dash import Dash, dcc, html, Input, Output, State, MATCH, ALL, ALLSMALLER, dash_table
-from dash import Dash, html, dcc
+from dash import Dash, dcc, html, Input, Output, State, MATCH, ALL, ALLSMALLER, dash_table, callback
 from dash.dependencies import Input, Output, State
 from dash_extensions.enrich import html, dcc, Output, Input, DashProxy
 import dash
-from dash import html, dcc, callback, Input, Output
-from flask_caching import function_namespace
 import pandas as pd
-import plotly.express as px
-from dash_svg import Svg, G, Path, Circle
-from dash_extensions import WebSocket
-from dash_bootstrap_templates import ThemeChangerAIO
-from datetime import datetime, timedelta 
-from datetime import datetime, date
-from dash.exceptions import PreventUpdate
-
-from sqlalchemy import true
 from components import channels
 
-dash.register_page(__name__)
+dash.register_page(__name__,path='/')
 
 df = pd.read_csv('cartoes.csv')
 df_aux = df.to_dict()
@@ -35,8 +17,7 @@ df_db_aux = df_db.to_dict()
 tab1_content = dbc.Card(
     dbc.CardBody(
         [
-            html.P("This is tab 2!", className="card-text"),
-            dbc.Button("Don't click here", color="danger"),
+
         ]
     ),
     className="mt-3",
@@ -55,8 +36,8 @@ tabs = html.Div(
     [
         dbc.Tabs(
             [
-                dbc.Tab(label="Tab 1", tab_id="tab-1"),
-                dbc.Tab(label="Tab 2", tab_id="tab-2"),
+                dbc.Tab(label="GRUPO DE TELAS", tab_id="tab-1"),
+                dbc.Tab(label="CANAIS", tab_id="tab-2"),
             ],
             id="tabs",
             active_tab="tab-1",
@@ -67,7 +48,8 @@ tabs = html.Div(
 
 navbar = dbc.NavbarSimple(
     children=[
-        dcc.Store(id='store_db_aux', data=df_db_aux),
+        dcc.Store(id='store_db_aux'),
+        dcc.Store(id='store-canais'),
         dcc.Location(id="url"),
         dbc.NavItem(dbc.NavLink("Page 1", href="#")),
         dbc.DropdownMenu(
@@ -87,21 +69,23 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-def table (dados):
+def render_table (dados):
     df = pd.read_csv(dados)
     #df = pd.read_csv('cartoes.csv')
-    tables = dash_table.DataTable(id="modal_table1", editable=True, row_deletable=True ,page_size=10,
+    df = pd.DataFrame(df).sort_values(by='data', ascending=False)
+    tables = dash_table.DataTable(id="modal_table1", editable=True, row_deletable=True ,page_size=10, 
                                     columns=[{'name': i, 'id': i} for i in df.columns], 
                                     data=df.to_dict('records'),
                                     style_cell_conditional=[
                                             {'if': {'column_id': 'unidade',},
-                                            'display': 'None',}]
+                                            'display': 'None',}],
+                                    sort_action='native',
                                 )
     return  tables
 
-def table2 ():
+def table2 (x):
     db = pd.read_csv('db.csv')
-    db2 = db[db['id_slide'] == 's1111'] 
+    db2 = db[db['id_slide'] == x] 
     #df = pd.read_csv('cartoes.csv')
     tables = dash_table.DataTable(id="modal_table2", editable=True, row_deletable=False ,page_size=10,
                                     columns=[{'name': i, 'id': i} for i in db2.columns], 
@@ -131,17 +115,6 @@ def table2 ():
     return  tables
 
 
-def getData():
-    return pd.read_csv().to_dict('records')
-
-def getData2():
-    return pd.read_csv().to_dict('records')
-    
-def back_to_df(dictio):
-    return pd.DataFrame.from_dict(dictio)
-
-#tblcols  =[{"name": i, "id": i} for i in back_to_df(getData()).columns]
-#tblcols2 =[{"name": i, "id": i} for i in back_to_df(getData2()).columns]
 
 
 body = dbc.Container(
@@ -150,7 +123,7 @@ body = dbc.Container(
             [
                 dbc.Row([
                         dbc.Label("Campos de texto"),
-                        html.Div(table2()),  # id=divtable2
+                        html.Div(id='divtable2'),  # id=divtable2
                         ], style={"padding-bottom": "20px"}),
                 dbc.Row([
                     
@@ -183,8 +156,8 @@ modal=dbc.Modal([
                                 html.H5("asdas", id="db")
                         ], width=2, style={"padding-left": "15px"}),
                         dbc.Col([
-                                dbc.Label("Posição"),
-                                html.H5("asdas", id="valor1")
+                                dbc.Label("id"),
+                                html.H5("asdas", id="id")
                         ], width=2, style={"padding-left": "15px"}),
                         dbc.Col([
                                 dbc.Label("Filtro"),
@@ -225,7 +198,7 @@ def switch_tab(at):
 
 
 @callback(Output("page-content5", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
+def render_tab_content(pathname):
     if pathname == "/" or pathname == "/dashboard":
         return channels.layout
 
@@ -241,10 +214,12 @@ def render_page_content(pathname):
 @callback(
     [Output("modal_editor", "is_open"),
     Output("slide_title", "children"),
+    Output("id", "children"),
     Output("template", "children"),
     Output("valor", "children"),
     Output("db", "children"),
-    Output('divtable', 'children')],
+    Output('divtable', 'children'),
+    Output('divtable2', 'children')],
     Input({'type': 'btn_edit_card_slide', 'id': ALL}, 'n_clicks'),
     State("modal_editor", "is_open")
 )
@@ -255,173 +230,101 @@ def toggle_modal(n1, is_open):
     button_id = ctx.triggered_id if not None else 'No clicks yet'
 
     if n1:
-        if n1[0]!=None:
+        if n1:
             btn_id = button_id['id']
             btn_split = btn_id.split("_")
-
             db = pd.read_csv('db.csv')
             db2 = db[db['id_slide'] == btn_split[2]] 
             db2.reset_index(inplace=True)
-
-            title = db2._get_value(0, 'id_slide')
+            id_slide = db2._get_value(0, 'id_slide')
+            title = db2._get_value(0, 'title')
             template = db2._get_value(0, 'template')
             data = db2._get_value(0, 'data')
             filter = db2._get_value(0, 'filter')
-            div_table = table (data)
-            print(n1)
+            div_table = render_table (data)
+            div_table2 = table2 (id_slide)
+            print(div_table2)
             print(title)
             print(btn_split[2])
             is_open = True
-            return [is_open,title,template,filter,data,div_table]
+            return [is_open,title,id_slide,template,filter,data,div_table,div_table2]
     print(n1)
     return is_open
 
 
 
 
-
+#ATUALIZACAO TABELA DINAMICA
 @callback(
     [Output("modal_table1", "data"),
     Output("modal_table1", "columns"),
-    Output('slide_preview', 'children')],
+    Output('store_render_new_layout', 'data')],
     [Input("btn-save", "n_clicks"), 
     Input('editing-rows-button', 'n_clicks'),
-    Input('db', 'children'),
-    Input('store-receitas', 'data'),
-    Input('store-receitas2', 'data'),
-    Input("slide_title", "children")],
+    Input("db", "children")],
     [State('modal_table1', 'data'), 
-    State('modal_table1', 'columns'),
-    State('slide_preview', 'children'),
-    State('store-receitas', 'data'),
-    State('store-receitas2', 'data')]
+    State('modal_table1', 'columns')]
 )
-def update(button, clicked, dataframetemp, store_receitas,store_receitas2,title, data,columns,slide_preview,x,y):
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-    print (changed_id)
-
-    datapre = slide_preview
-
-    db = pd.read_csv('db.csv')
-    db2 = db[db['id_slide'] == title] 
-    db2.reset_index(inplace=True)
-    TEMPLATE = db2._get_value(0, 'template')
-    POSITION = db2._get_value(0, 'position')-1
-
-    if TEMPLATE == 1:
-            datapre = store_receitas[POSITION]
-    if TEMPLATE == 2:
-            datapre = store_receitas2[POSITION]
-
+def update_modal_table_and_preview(button, clicked,db,table_data,columns):
     
-    if 'btn-save' in changed_id:
-        df = pd.DataFrame(data)
-        df.to_csv(dataframetemp, encoding='utf-8', index=False)
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    #print (changed_id)
+    store_update_new_layout = [changed_id]
+
+    if 'btn-save' in changed_id:  
+        #grava novos dados da tabela
+        df = pd.DataFrame(table_data)
+        df.to_csv(db, encoding='utf-8', index=False)
+        #Retorna nova tabela
         columns = [{'name': i, 'id': i} for i in df.columns]
-        data = df.to_dict('records')
-        print(data)
-        return data, columns, datapre
+        table_data = df.to_dict('records')
+        store_update_new_layout = [changed_id]
+        return table_data, columns,store_update_new_layout
+
     if 'editing-rows-button' in changed_id:
         if clicked > 0:              
              data2=({c['id']: '' for c in columns})
-             data.insert(0,data2)
-             print(data)
-        return data, columns, datapre
-    return data, columns, datapre
+             table_data.insert(0,data2)
+             #print(table_data)
+             #table_data.append({c['id']: '' for c in columns})
+
+        return table_data, columns,store_update_new_layout
+    return table_data, columns,store_update_new_layout
 
 
-
-
-'''
-
+#UPDATE PARA PREVIEW LAYOUT
 @callback(
-    [Output("store_db_aux", "data")],
-    Input({'type': 'btn_delete_card_slide', 'index': ALL}, 'n_clicks'),
-    State("store_db_aux", "data")
+    [Output("slide_preview", "children"),
+    Output("store_update_new_layout", "data")],
+    [Input('cache_layout_c1', 'children'),
+    Input('cache_layout_c2', 'children'),
+    Input('cache_layout_c3', 'children'),
+    Input("id", "children")],
+    State('store_render_new_layout', 'data'),
+    State("slide_preview", "children"),
+    State("store_layouts_c1", "data"),
+    State("store_layouts_c2", "data"),
+    State("store_layouts_c3", "data")
 )
-def toggle_modal2(n1,store_db_aux):
-    ctx = dash.callback_context
-    button_id = ctx.triggered_id if not None else 'No clicks yet'
-    store_db_aux2 = store_db_aux
-
-    input_id = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    
-    if "index" in input_id: 
-        print(button_id)
-        print(n1)
-    else:
-        print("No clicks yet")
-    return [store_db_aux2]
-
-
-     
-
-    #if n1:
-    #    if clicked > 0:
-
-    #import pdb
-    #pdb.set_trace()
-    
-'''
-
-
-'''
-
-@callback(
-    [Output("modal_editor", "is_open"),
-    Output("slide_title", "placeholder"),
-    Output("template", "children"),
-    Output("valor", "children"),
-    Output("db", "children"),
-    Output('slide_preview', 'children'),
-    Output("divtable", "children")],
-    Input({'type': 'btn_edit_card_slide', 'index': ALL}, 'n_clicks'), 
-    prevent_initial_call=True
-)
-def toggle_modal(n1, store_receitas,store_receitas2,is_open,update_btn):
-    ctx = dash.callback_context
-    #changed_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    button_id = ctx.triggered_id if not None else 'No clicks yet'
-    btid=(button_id.index)
-
-    print(button_id)
+def toggle_modal2(cache_layout_c1,cache_layout_c2,cache_layout_c3,slide_id,cache_layout_Y2,state,state2,state3,state1):
+    datapre=[]
+    print ("callcack update grafico")
     db = pd.read_csv('db.csv')
-    db2 = db[db['id_slide'] == button_id] #recupera o id do botao
+    db2 = db[db['id_slide'] == slide_id] 
     db2.reset_index(inplace=True)
+    TEMPLATE = db2._get_value(0, 'template')
+    POSITION = db2._get_value(0, 'position')-1
+    print (slide_id)
 
-    print(n1)
-
-    if n1:
-        db = pd.read_csv('db.csv')
-        db2 = db[db['id_slide'] == btid[2]] 
-        db2.reset_index(inplace=True)
-        title = db2._get_value(0, 'title')
-        template = db2._get_value(0, 'template')
-        data = db2._get_value(0, 'data')
-        filter = db2._get_value(0, 'filter')
-        div_table = table (data)
-        print(n1)
-        print(title)
-        is_open = True
-        return [is_open,title,template,filter,data,datapre,div_table]
-
-'''
+    if TEMPLATE == 1:
+            datapre = cache_layout_c1[slide_id]
+    elif TEMPLATE == 2:
+            datapre = cache_layout_c2[slide_id]
+    elif TEMPLATE == 3:
+            datapre = cache_layout_c3[slide_id]
 
 
+    #print (cache_layout_c1)
 
-
-
-
-
-
-
-
-
-
-    #if n1:
-    #    if clicked > 0:
-
-    #import pdb
-    #pdb.set_trace()
-    
+    return datapre, datapre
 

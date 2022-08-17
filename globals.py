@@ -1,24 +1,15 @@
+from dash import Dash, html, dcc, callback
+import dash
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+from dash_extensions.enrich import html, dcc, Output, Input
 import pandas as pd
+from templates import template1, template2
 import os
+import datetime
+from flask_caching import Cache
+import pandas as pd
 
-
-
-
-
-
-
-
-if ("df_cat_receita.csv" in os.listdir()) and ("df_cat_despesa.csv" in os.listdir()):
-    df_cat_receita = pd.read_csv("df_cat_receita.csv", index_col=0)
-    df_cat_despesa = pd.read_csv("df_cat_despesa.csv", index_col=0)
-    cat_receita = df_cat_receita.values.tolist()
-    cat_despesa = df_cat_despesa.values.tolist()
-
-else:    
-    cat_receita = {'Categoria': ["Salário", "Investimentos", "Comissão"]}
-    cat_despesa = {'Categoria': ["Alimentação", "Aluguel", "Gasolina", "Saúde", "Lazer"]}
-    
-    df_cat_receita = pd.DataFrame(cat_receita, columns=['Categoria'])
-    df_cat_despesa = pd.DataFrame(cat_despesa, columns=['Categoria'])
-    df_cat_receita.to_csv("df_cat_receita.csv")
-    df_cat_despesa.to_csv("df_cat_despesa.csv")
+#df_db = pd.read_csv('db.csv')
+#df_cartoes = pd.read_csv('cartoes.csv')
+#df_humanos_prod = pd.read_csv('humanos_prod.csv')

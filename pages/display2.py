@@ -1,17 +1,9 @@
-import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, callback, Input, Output
 from dash.dependencies import Input, Output, State
-from dash_extensions.enrich import html, dcc, Output, Input, DashProxy
+from dash_extensions.enrich import html, dcc, Output, Input
 import dash
-from dash import html, dcc, callback, Input, Output
-from flask_caching import function_namespace
 import pandas as pd
-import plotly.express as px
-from dash_svg import Svg, G, Path, Circle
-from dash_extensions import WebSocket
-from dash_bootstrap_templates import ThemeChangerAIO
-from datetime import datetime, timedelta 
-
+import pickle
 
 dash.register_page(__name__)
 
@@ -54,19 +46,22 @@ def CHANGE_PAGE6(n_intervals):
     return SD
 
 
-
 @callback([Output('interval-component2', 'interval'),
           Output('interval-component2', 'disabled'),
           Output('app-container2', 'children')],
           [Input('interval-component2', 'n_intervals'),
-          Input('store-start2', 'data'),
-          Input('store-receitas2', 'data')],
+          Input('store-start2', 'data')],
           [State('interval-component2', 'disabled'),
           State('interval-component2', 'interval'),
           State('store-start2', 'data')])
-def CHANGE_PAGE3(n_intervalsInput, storedata, storedata2, disabled, interval, storedatastate):
-    SD= storedata2
+def CHANGE_PAGE3(n_intervalsInput, storedata, disabled, interval, storedatastate):
     print('display2 ok')
+
+    with open('filepk2.txt', 'rb') as handle:
+        b = pickle.loads(handle.read())
+
+    SD = list(b.values())
+
     LAYOUTS_TELA_1 = SD
     I = interval
     D = disabled
